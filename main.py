@@ -1,4 +1,5 @@
 import cv2
+import os
 import glob2
 from time import time, sleep
 
@@ -35,7 +36,6 @@ def addImageWatermark(logo_name, img_name, opacity, pos=(10, 10)):
     logo = cv2.imread(logo_name, -1)
 
     h, w, d = img.shape
-    print(img.shape)
     # Tính toán điều chỉnh ảnh
     cut1_h = round(abs((min(h, w) - h) / 2) + 0.5)
     cut2_h = round(abs((min(h, w) - h) / 2) - 0.5)
@@ -53,23 +53,33 @@ def addImageWatermark(logo_name, img_name, opacity, pos=(10, 10)):
     # apply the overlay
     cv2.addWeighted(overlay, opacity, output, 1 - opacity, 0, output)
 
-    # Lưu ảnh vào thư mục Anh_dich
-    # Gắn tên và thư mục đích cho ảnh đã có logo
-    img_newname = img_name.replace("Anh_goc", "Anh_dich")
-    # Lưu ảnh mới vào Anh_dich
+    # Set name for modified image
+    if ".jpg" in img_name:
+        img_newname = img_name.replace(".jpg", "modified.jpg")
+    if ".png" in img_name:
+        img_newname = img_name.replace(".png", "modified.png")
+    # Save modified image in the same dir with the origin one
     cv2.imwrite(img_newname, output)
 
+for directory in os.listdir("."):
+    if os.path.isfile(directory) or directory == ".git":
+        continue
 
-# Lấy danh sách ảnh trong thư mục Anh_goc
-list_img_jpg = glob2.glob(".\Anh_goc\*.jpg")
-list_img_png = glob2.glob(".\Anh_goc\*.png")
+    # Get list of all images in subdirectory
+    list_img_jpg = glob2.glob(f"./{directory}/*.jpg")
+    list_img_png = glob2.glob(f"./{directory}/*.png")
 
-for img_jpg_name in list_img_jpg:
+    for img_jpg_name in list_img_jpg:
+        if "modified" in img_jpg_name:
+            continue
+        print(img_jpg_name)
 
-    # Ghép logo vào ảnh đã resize
-    addImageWatermark("./logo.png", img_jpg_name, 100, (10, 10))
+        # Ghép logo vào ảnh đã resize
+        addImageWatermark("./logo.png", img_jpg_name, 100, (10, 10))
 
-for img_png_name in list_img_png:
+    for img_png_name in list_img_png:
+        if "modified" in img_png_name:
+            continue
 
-    # Ghép logo vào ảnh đã resize
-    addImageWatermark("./logo.png", img_png_name, 100, (10, 10))
+        # Ghép logo vào ảnh đã resize
+        addImageWatermark("./logo.png", img_png_name, 100, (10, 10))
