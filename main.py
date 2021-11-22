@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import cv2
 import os
 import glob2
@@ -72,7 +74,6 @@ for directory in os.listdir("."):
     for img_jpg_name in list_img_jpg:
         if "modified" in img_jpg_name:
             continue
-        print(img_jpg_name)
 
         # Ghép logo vào ảnh đã resize
         addImageWatermark("./logo.png", img_jpg_name, 100, (10, 10))
